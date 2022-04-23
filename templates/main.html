@@ -11,9 +11,14 @@
 <input type='text' id='add_member'>
 <button id='remove_member'>remove</button>
 <button id='next_member'>next</button>
-<p id='result'>?</p>
+<p style='visibility:hidden' id='result'>?</p>
 <table id='members'>
 	
+</table>
+
+<button id='action'>do a thing</button>
+<table id='logs'>
+
 </table>
 
 <script>
@@ -43,6 +48,15 @@
 		});
 	});
 
+	$(function() {
+		$('button#action').bind('click', function() {
+			$.getJSON($SCRIPT_ROOT + '/do_action', {id: parseInt($('#current_member').text())}, function(data){
+				$('#result').text(data.result);
+				updateLogs();
+			});
+		});
+	});
+
 	function updateTables() {
 		$.getJSON($SCRIPT_ROOT + '/show_members', null, function(data){
 			$('#members').empty();
@@ -55,6 +69,18 @@
 		});
 	}
 
-	$(document).ready(updateTables);
+	function updateLogs() {
+		$.getJSON($SCRIPT_ROOT + '/show_logs', null, function(data){
+			$('#logs').empty();
+			$.each(data.result, function(i, log) {
+				$('<tr>').append(
+					$('<td>').text(log.text),
+				).appendTo('#logs');
+			});
+		});
+	}
+
+	$(updateTables);
+	$(updateLogs);
 
 </script>
