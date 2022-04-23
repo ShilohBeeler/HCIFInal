@@ -1,4 +1,4 @@
-#HCI Final Project -- DND Combat Management Tool
+# HCI Final Project -- DND Combat Management Tool
 
 "Completed" features -- creating units (internally referred to as members), removing units, navigating between units, having units do actions, having units do actions to other units, and logging all actions done.
 
