@@ -1,0 +1,60 @@
+<!doctype html>
+<script src="{{ url_for('static', filename='jquery.js') }}"></script>
+<script>
+	$SCRIPT_ROOT = {{ request.script_root|tojson }};
+</script>
+<div>hello world :)</div>
+<div>current member = 
+	<p id='current_member'>-1</p>
+</div>
+<button id='add_member'>add</button>
+<input type='text' id='add_member'>
+<button id='remove_member'>remove</button>
+<button id='next_member'>next</button>
+<p id='result'>?</p>
+<table id='members'>
+	
+</table>
+
+<script>
+	$(function() {
+		$('button#add_member').bind('click', function() {
+			$.getJSON($SCRIPT_ROOT + '/add_member', {name: $('input[id="add_member"]').val()}, function(data){
+				$('#result').text(data.result);
+				updateTables();
+			});
+		});
+	});
+
+	$(function() {
+		$('button#remove_member').bind('click', function() {
+			$.getJSON($SCRIPT_ROOT + '/remove_member', {id: parseInt($('#current_member').text())}, function(data){
+				$('#current_member').text(data.result);
+				updateTables();
+			});
+		});
+	});
+
+	$(function() {
+		$('button#next_member').bind('click', function() {
+			$.getJSON($SCRIPT_ROOT + '/next_member', {id: parseInt($('#current_member').text())}, function(data){
+				$('#current_member').text(data.result);
+			});
+		});
+	});
+
+	function updateTables() {
+		$.getJSON($SCRIPT_ROOT + '/show_members', null, function(data){
+			$('#members').empty();
+			$.each(data.result, function(i, member) {
+				$('<tr>').append(
+					$('<td class="member_name">').text(member.name),
+					$('<td>').text(member.id)
+				).appendTo('#members');
+			});
+		});
+	}
+
+	$(document).ready(updateTables);
+
+</script>
