@@ -1,4 +1,5 @@
 <!doctype html>
+<link rel='stylesheet' type='text/css' href="{{ url_for('static', filename='styles/main.css') }}">
 <script src="{{ url_for('static', filename='jquery.js') }}"></script>
 <script>
 	$SCRIPT_ROOT = {{ request.script_root|tojson }};
@@ -15,8 +16,12 @@
 <table id='members'>
 	
 </table>
+<label>Target:</label>
+<select id='targets'>
 
+</select>
 <button id='action'>do a thing</button>
+<button id='action_to_target'>do a thing to a target</button>
 <table id='logs'>
 
 </table>
@@ -57,14 +62,28 @@
 		});
 	});
 
+	$(function() {
+		$('button#action_to_target').bind('click', function() {
+			$.getJSON($SCRIPT_ROOT + '/do_action_to_target', {
+					id: parseInt($('#current_member').text()),
+					target: parseInt($('#targets').val())
+				}, function(data){
+					$('#result').text(data.result);
+					updateLogs();
+			});
+		});
+	});
+
 	function updateTables() {
 		$.getJSON($SCRIPT_ROOT + '/show_members', null, function(data){
 			$('#members').empty();
+			$('#targets').empty();
 			$.each(data.result, function(i, member) {
 				$('<tr>').append(
 					$('<td class="member_name">').text(member.name),
 					$('<td>').text(member.id)
 				).appendTo('#members');
+				$('<option>').val(member.id).text(member.name).appendTo('#targets');
 			});
 		});
 	}

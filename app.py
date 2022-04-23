@@ -66,6 +66,19 @@ def do_action():
 	session['logs'] = logs
 	return jsonify(result="success")
 
+@application.route('/do_action_to_target')
+def do_action_to_target():
+	member_id = request.args.get('id', -1, type=int)
+	target_id = request.args.get('target', -1, type=int)
+	if member_id == -1:
+		return jsonify(result="failure")
+	logs = session['logs']
+	members = session['member_data']
+	new_log = {"text": members[member_id]['name'] + " did a thing to " + members[target_id]['name'] + "."}
+	logs.append(new_log)
+	session['logs'] = logs
+	return jsonify(result="success")
+
 @application.route('/clear_logs')
 def clear_logs():
 	session['logs'] = []
