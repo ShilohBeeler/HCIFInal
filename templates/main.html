@@ -244,6 +244,7 @@
 				$('<th>').text('HP'),
 				$('<th>').text('MP'),
 				$('<th>').text('AC'),
+				$('<th>').text('Initiative'),
 				$('<th>').text('id')
 			).appendTo('#members');
 			$.each(data.result, function(i, member) {
@@ -252,6 +253,7 @@
 					$('<td>').text(member.current_hp+"/"+member.max_hp),
 					$('<td>').text(member.current_mp+"/"+member.max_mp),
 					$('<td>').text(member.armor_class),
+					$('<td>').text(member.initiative),
 					$('<td>').text(member.id)
 				).appendTo('#members');
 				$('<option>').val(member.id).text(member.name).appendTo('#targets');

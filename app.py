@@ -24,6 +24,7 @@ def add_member():
 	members = session['member_data']
 	member = {'id': len(members), 
 						'name': member_name,
+						'initiative': initiative,
 						'current_hp': current_hp,
 						'max_hp': max_hp,
 						'current_mp': current_mp,
@@ -43,10 +44,10 @@ def remove_member():
 	for i in range(len(members)):
 		members[i]['id'] = i
 	session['member_data']=members
-	if member_id >= len(members):
-		return jsonify(result={'id':member_id-1, 'name':members[member_id-1]['name']})
-	elif member_id == 0 and not members:
+	if member_id == 0 and not members:
 		return jsonify(result={'id':-1, 'name':'N/A'})
+	elif member_id >= len(members):
+		return jsonify(result={'id':member_id-1, 'name':members[member_id-1]['name']})
 	else:
 		return jsonify(result={'id':member_id, 'name':members[member_id]['name']})
 
