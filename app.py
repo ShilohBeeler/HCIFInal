@@ -38,28 +38,28 @@ def remove_member():
 	member_id = request.args.get('id', -1, type=int)
 	members = session['member_data']
 	if member_id == -1 or not members:
-		return jsonify(result=-1)
+		return jsonify(result={'id':-1, 'name':'N/A'})
 	members.pop(member_id)
 	for i in range(len(members)):
 		members[i]['id'] = i
 	session['member_data']=members
 	if member_id >= len(members):
-		return jsonify(result=member_id-1)
+		return jsonify(result={'id':member_id-1, 'name':members[member_id-1]['name']})
 	elif member_id == 0 and not members:
-		return jsonify(result=-1)
+		return jsonify(result={'id':-1, 'name':'N/A'})
 	else:
-		return jsonify(result=member_id)
+		return jsonify(result={'id':member_id, 'name':members[member_id]['name']})
 
 @application.route('/next_member')
 def next_member():
 	member_id = request.args.get('id', -1, type=int)
 	members = session['member_data']
 	if not members:
-		return jsonify(result=-1)
+		return jsonify(result={'id':-1, 'name':'N/A'})
 	elif member_id >= len(members)-1:
-		return jsonify(result=0)
+		return jsonify(result={'id':0, 'name':members[0]['name']})
 	else:
-		return jsonify(result=member_id+1)
+		return jsonify(result={'id':member_id+1, 'name':members[member_id+1]['name']})
 
 @application.route('/show_members')
 def show_members():

@@ -8,6 +8,10 @@ table, td {
 	width: 200px;
 }
 
+#member_values {
+	width: 250px;
+}
+
 .page_column {
   float: left;
   width: 33.33%;

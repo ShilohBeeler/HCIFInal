@@ -10,23 +10,28 @@
 	<div class='page_column'>
 		<div>hello world :)</div>
 
-		<button id='add_member'>add</button>
 		<div class='function_div' id='member_values'>
 			<label>Name:</label>
 			<input type='text' id='member_name'>
+			<br>
 			<label>Initiative:</label>
 			<input type='number' id='initiative'>
+			<br>
 			<label>Max HP:</label>
 			<input type='number' id='max_hp'>
+			<br>
 			<label>Max MP:</label>
 			<input type='number' id='max_mp'>
+			<br>
 			<label>AC:</label>
 			<input type='number' id='armor_class'>
+			<br>
+			<button id='add_member'>add</button>
 		</div>
 
 		<div class='function_div' id='member_management'>
 			<div>current member = 
-				<p id='current_member'>-1</p>
+				<p data-id='-1' id='current_member'>N/A</p>
 			</div>
 			<button id='remove_member'>remove</button>
 			<button id='next_member'>next</button>
@@ -113,8 +118,8 @@
 
 	$(function() {
 		$('button#remove_member').bind('click', function() {
-			$.getJSON($SCRIPT_ROOT + '/remove_member', {id: parseInt($('#current_member').text())}, function(data){
-				$('#current_member').text(data.result);
+			$.getJSON($SCRIPT_ROOT + '/remove_member', {id: parseInt($('#current_member').attr('data-id'))}, function(data){
+				$('#current_member').text(data.result.name).attr('data-id', data.result.id);
 				updateTables();
 			});
 		});
@@ -122,15 +127,16 @@
 
 	$(function() {
 		$('button#next_member').bind('click', function() {
-			$.getJSON($SCRIPT_ROOT + '/next_member', {id: parseInt($('#current_member').text())}, function(data){
-				$('#current_member').text(data.result);
+			$.getJSON($SCRIPT_ROOT + '/next_member', {id: parseInt($('#current_member').attr('data-id'))}, function(data){
+				console.log(data);
+				$('#current_member').text(data.result.name).attr('data-id', data.result.id);
 			});
 		});
 	});
 
 	$(function() {
 		$('button#action').bind('click', function() {
-			$.getJSON($SCRIPT_ROOT + '/do_action', {id: parseInt($('#current_member').text())}, function(data){
+			$.getJSON($SCRIPT_ROOT + '/do_action', {id: parseInt($('#current_member').attr('data-id'))}, function(data){
 				$('#result').text(data.result);
 				updateLogs();
 			});
@@ -140,7 +146,7 @@
 	$(function() {
 		$('button#action_to_target').bind('click', function() {
 			$.getJSON($SCRIPT_ROOT + '/do_action_to_target', {
-					id: parseInt($('#current_member').text()),
+					id: parseInt($('#current_member').attr('data-id')),
 					target: parseInt($('#targets').val())
 				}, function(data){
 					$('#result').text(data.result);
@@ -152,7 +158,7 @@
 	$(function() {
 		$('#attack').bind('click', function() {
 			$.getJSON($SCRIPT_ROOT + '/attack', {
-					id: parseInt($('#current_member').text()),
+					id: parseInt($('#current_member').attr('data-id')),
 					target: parseInt($('#targets').val()),
 					damage: parseInt($('#attack_action #damage').val()),
 					weapon: $('#attack_action #weapon').val()
@@ -167,7 +173,7 @@
 	$(function() {
 		$('#move').bind('click', function() {
 			$.getJSON($SCRIPT_ROOT + '/move', {
-					id: parseInt($('#current_member').text()),
+					id: parseInt($('#current_member').attr('data-id')),
 					distance: parseInt($('#move_action #distance').val())
 				}, function(data){
 					$('#result').text(data.result);
@@ -179,7 +185,7 @@
 	$(function() {
 		$('#ready').bind('click', function() {
 			$.getJSON($SCRIPT_ROOT + '/ready', {
-					id: parseInt($('#current_member').text()),
+					id: parseInt($('#current_member').attr('data-id')),
 					action: $('#ready_action #action').val()
 				}, function(data){
 					$('#result').text(data.result);
@@ -191,7 +197,7 @@
 	$(function() {
 		$('#reaction').bind('click', function() {
 			$.getJSON($SCRIPT_ROOT + '/reaction', {
-					id: parseInt($('#current_member').text()),
+					id: parseInt($('#current_member').attr('data-id')),
 					target: parseInt($('#targets').val()),
 					damage: $('#reaction_action #damage').val()
 				}, function(data){
@@ -205,7 +211,7 @@
 	$(function() {
 		$('#bonus_action').bind('click', function() {
 			$.getJSON($SCRIPT_ROOT + '/bonus_action', {
-					id: parseInt($('#current_member').text()),
+					id: parseInt($('#current_member').attr('data-id')),
 					action: $('#bonus_action_action #action').val()
 				}, function(data){
 					$('#result').text(data.result);
@@ -217,7 +223,7 @@
 	$(function() {
 		$('#bonus_attack').bind('click', function() {
 			$.getJSON($SCRIPT_ROOT + '/bonus_attack', {
-					id: parseInt($('#current_member').text()),
+					id: parseInt($('#current_member').attr('data-id')),
 					target: parseInt($('#targets').val()),
 					damage: parseInt($('#bonus_attack_action #damage').val()),
 					weapon: $('#bonus_attack_action #weapon').val()
