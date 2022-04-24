@@ -103,7 +103,7 @@ def attack():
 		return jsonify(result='failure')
 	logs = session['logs']
 	members = session['member_data']
-	members[target_id]['current_hp'] -= damage
+	members[target_id]['current_hp'] = max(members[target_id]['current_hp']-damage,0)
 	new_log = {'text': members[member_id]['name'] + ' did ' + str(damage) + ' damage to ' + members[target_id]['name'] + ' using a(n) ' + weapon + '.'}
 	logs.append(new_log)
 	session['logs'] = logs
@@ -145,7 +145,7 @@ def reaction():
 		return jsonify(result='failure')
 	logs = session['logs']
 	members = session['member_data']
-	members[target_id]['current_hp'] -= damage
+	members[target_id]['current_hp'] = max(members[target_id]['current_hp']-damage,0)
 	new_log = {'text': members[member_id]['name'] + ' dealt ' + str(damage) + ' reaction damage to ' + members[target_id]['name'] + '.'}
 	logs.append(new_log)
 	session['logs'] = logs
@@ -175,7 +175,7 @@ def bonus_attack():
 		return jsonify(result='failure')
 	logs = session['logs']
 	members = session['member_data']
-	members[target_id]['current_hp'] -= damage
+	members[target_id]['current_hp'] = max(members[target_id]['current_hp']-damage,0)
 	new_log = {'text': members[member_id]['name'] + ' did ' + str(damage) + ' damage to ' + members[target_id]['name'] + ' using a(n) ' + weapon + ' as a bonus action.'}
 	logs.append(new_log)
 	session['logs'] = logs
