@@ -1,3 +1,20 @@
 table, td {
 	border: 1px solid black;
 }
+
+.function_div {
+	border: 1px solid black;
+	max-height: 200px;
+	width: 200px;
+}
+
+.page_column {
+  float: left;
+  width: 33.33%;
+}
+
+.page_row:after {
+  content: "";
+  display: table;
+  clear: both;
+}

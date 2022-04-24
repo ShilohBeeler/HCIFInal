@@ -1,35 +1,110 @@
 <!doctype html>
+
 <link rel='stylesheet' type='text/css' href="{{ url_for('static', filename='styles/main.css') }}">
 <script src="{{ url_for('static', filename='jquery.js') }}"></script>
 <script>
 	$SCRIPT_ROOT = {{ request.script_root|tojson }};
 </script>
-<div>hello world :)</div>
-<div>current member = 
-	<p id='current_member'>-1</p>
-</div>
-<button id='add_member'>add</button>
-<input type='text' id='add_member'>
-<button id='remove_member'>remove</button>
-<button id='next_member'>next</button>
-<p style='visibility:hidden' id='result'>?</p>
-<table id='members'>
+
+<div class='page_row'>
+	<div class='page_column'>
+		<div>hello world :)</div>
+
+		<button id='add_member'>add</button>
+		<div class='function_div' id='member_values'>
+			<label>Name:</label>
+			<input type='text' id='member_name'>
+			<label>Initiative:</label>
+			<input type='number' id='initiative'>
+			<label>Max HP:</label>
+			<input type='number' id='max_hp'>
+			<label>Max MP:</label>
+			<input type='number' id='max_mp'>
+			<label>AC:</label>
+			<input type='number' id='armor_class'>
+		</div>
+
+		<div class='function_div' id='member_management'>
+			<div>current member = 
+				<p id='current_member'>-1</p>
+			</div>
+			<button id='remove_member'>remove</button>
+			<button id='next_member'>next</button>
+		</div>
+
+		<p style='visibility:hidden' id='result'>?</p>
+
+		<h1>Members</h1>
+		<table id='members'>
 	
-</table>
-<label>Target:</label>
-<select id='targets'>
+		</table>
+		<label>Target:</label>
+		<select id='targets'>
+		</select>
+	</div>
+	<div class='page_column'>
+		<h1>Actions</h1>
 
-</select>
-<button id='action'>do a thing</button>
-<button id='action_to_target'>do a thing to a target</button>
-<table id='logs'>
+		<div class='function_div' id='attack_action'>
+			<label>Damage:</label>
+			<input type='number' id='damage'>
+			<label>Weapon:</label>
+			<input type='text' id='weapon'>
+			<button id='attack'>Attack Target!</button>
+		</div>
 
-</table>
+		<div class='function_div' id='move_action'>
+			<label>Distance:</label>
+			<input type='number' id='distance'>
+			<button id='move'>Move!</button>
+		</div>
+
+		<div class='function_div' id='ready_action'>
+			<label>Action:</label>
+			<input type='text' id='action'>
+			<button id='ready'>Ready Action!</button>
+		</div>
+
+		<div class='function_div' id='reaction_action'>
+			<label>Damage:</label>
+			<input type='number' id='damage'>
+			<button id='reaction'>Reaction Attack On Target!</button>
+		</div>
+
+		<div class='function_div' id='bonus_action_action'>
+			<label>Action:</label>
+			<input type='text' id='action'>
+			<button id='bonus_action'>Bonus Action!</button>
+		</div>
+
+		<div class='function_div' id='bonus_attack_action'>
+			<label>Damage:</label>
+			<input type='number' id='damage'>
+			<label>Weapon:</label>
+			<input type='text' id='weapon'>
+			<button id='bonus_attack'>Bonus Attack on Target!</button>
+		</div>
+	</div>
+<!--<button id='action'>do a thing</button>
+<button id='action_to_target'>do a thing to a target</button>-->
+	<div class='page_column'>
+		<h1>Logs</h1>
+		<table id='logs'>
+
+		</table>
+	</div>
+</div>
 
 <script>
 	$(function() {
 		$('button#add_member').bind('click', function() {
-			$.getJSON($SCRIPT_ROOT + '/add_member', {name: $('input[id="add_member"]').val()}, function(data){
+			$.getJSON($SCRIPT_ROOT + '/add_member', {
+				name: $('#member_name').val(),
+				initiative: parseInt($('#initiative').val()),
+				max_hp: parseInt($('#max_hp').val()),
+				max_mp: parseInt($('#max_mp').val()),
+				armor_class: parseInt($('#armor_class').val())
+			}, function(data){
 				$('#result').text(data.result);
 				updateTables();
 			});
@@ -74,13 +149,103 @@
 		});
 	});
 
+	$(function() {
+		$('#attack').bind('click', function() {
+			$.getJSON($SCRIPT_ROOT + '/attack', {
+					id: parseInt($('#current_member').text()),
+					target: parseInt($('#targets').val()),
+					damage: parseInt($('#attack_action #damage').val()),
+					weapon: $('#attack_action #weapon').val()
+				}, function(data){
+					$('#result').text(data.result);
+					updateLogs();
+					updateTables();
+			});
+		});
+	});
+
+	$(function() {
+		$('#move').bind('click', function() {
+			$.getJSON($SCRIPT_ROOT + '/move', {
+					id: parseInt($('#current_member').text()),
+					distance: parseInt($('#move_action #distance').val())
+				}, function(data){
+					$('#result').text(data.result);
+					updateLogs();
+			});
+		});
+	});
+
+	$(function() {
+		$('#ready').bind('click', function() {
+			$.getJSON($SCRIPT_ROOT + '/ready', {
+					id: parseInt($('#current_member').text()),
+					action: $('#ready_action #action').val()
+				}, function(data){
+					$('#result').text(data.result);
+					updateLogs();
+			});
+		});
+	});
+
+	$(function() {
+		$('#reaction').bind('click', function() {
+			$.getJSON($SCRIPT_ROOT + '/reaction', {
+					id: parseInt($('#current_member').text()),
+					target: parseInt($('#targets').val()),
+					damage: $('#reaction_action #damage').val()
+				}, function(data){
+					$('#result').text(data.result);
+					updateLogs();
+					updateTables();
+			});
+		});
+	});
+
+	$(function() {
+		$('#bonus_action').bind('click', function() {
+			$.getJSON($SCRIPT_ROOT + '/bonus_action', {
+					id: parseInt($('#current_member').text()),
+					action: $('#bonus_action_action #action').val()
+				}, function(data){
+					$('#result').text(data.result);
+					updateLogs();
+			});
+		});
+	});
+
+	$(function() {
+		$('#bonus_attack').bind('click', function() {
+			$.getJSON($SCRIPT_ROOT + '/bonus_attack', {
+					id: parseInt($('#current_member').text()),
+					target: parseInt($('#targets').val()),
+					damage: parseInt($('#bonus_attack_action #damage').val()),
+					weapon: $('#bonus_attack_action #weapon').val()
+				}, function(data){
+					$('#result').text(data.result);
+					updateLogs();
+					updateTables();
+			});
+		});
+	});
+
 	function updateTables() {
 		$.getJSON($SCRIPT_ROOT + '/show_members', null, function(data){
 			$('#members').empty();
 			$('#targets').empty();
+			$('<tr>').append(
+				$('<th>').text('Name'),
+				$('<th>').text('HP'),
+				$('<th>').text('MP'),
+				$('<th>').text('AC'),
+				$('<th>').text('id')
+			).appendTo('#members');
 			$.each(data.result, function(i, member) {
 				$('<tr>').append(
 					$('<td class="member_name">').text(member.name),
+					$('<td>').text(member.current_hp+"/"+member.max_hp),
+					$('<td>').text(member.current_mp+"/"+member.max_mp),
+					$('<td>').text(member.armor_class),
 					$('<td>').text(member.id)
 				).appendTo('#members');
 				$('<option>').val(member.id).text(member.name).appendTo('#targets');
