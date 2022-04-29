@@ -9,6 +9,7 @@
 </head>
 
 <body>
+<div id="result" style="display:none"></div>
 <div class="everything">
 			<div class="tophalf">
 			<div class="turn_order">
@@ -21,7 +22,7 @@
 				<button id="next_member" class="button">
 					Next
 				</button>
-				<button id="add_block" class="button">
+				<button class="button add_toggle">
 					+
 				</button>
 				</div>
@@ -65,16 +66,18 @@
 						<button id="add_member" class="button">
 							Add
 						</button>
-						<button id="cancel_block" class="button">
+						<button class="button add_toggle">
 							Cancel
 						</button>
 					</div>
 			</div>
 			<div class="turn_action">
 				<div class="ta_line"></div>
-				<span class="section_title">Nyajima's Turn</span>
+				<span class="section_title">
+					<span data-id="-1" id="current_member">N/A</span>'s Turn
+				</span>
 				<span class="select_target">Select Target:</span>
-				<select id="target"></select>
+				<select id="targets"></select>
 				<div class="actions">
 					<div class="single_action" id="move_action">
 						<span class="inner_text">Distance:</span>
@@ -136,7 +139,7 @@
 					</table>
 				</div>
 				<div class="bottom_div">
-					<button class="button">
+					<button id="clear_logs" class="button">
 						Clear Logs
 					</button>
 				</div>
@@ -183,6 +186,7 @@
 			}, function(data){
 				$('#result').text(data.result);
 				updateTables();
+				toggleBlocks();
 			});
 		});
 	});
@@ -199,9 +203,15 @@
 	$(function() {
 		$('button#next_member').bind('click', function() {
 			$.getJSON($SCRIPT_ROOT + '/next_member', {id: parseInt($('#current_member').attr('data-id'))}, function(data){
-				console.log(data);
 				$('#current_member').text(data.result.name).attr('data-id', data.result.id);
+				updateTables();
 			});
+		});
+	});
+
+	$(function() {
+		$('button.add_toggle').bind('click', function() {
+			toggleBlocks();
 		});
 	});
 
@@ -306,27 +316,58 @@
 		});
 	});
 
+	$(function() {
+		$('#clear_logs').bind('click', function() {
+			$.getJSON($SCRIPT_ROOT + '/clear_logs', null, function(data){
+				$('#result').text(data.result);
+				updateLogs();
+			});
+		});
+	});
+
 	function updateTables() {
 		$.getJSON($SCRIPT_ROOT + '/show_members', null, function(data){
-			$('#members').empty();
+			$('.em_table').empty();
 			$('#targets').empty();
+			$('.character_boxes').empty();
 			$('<tr>').append(
 				$('<th>').text('Name'),
 				$('<th>').text('HP'),
 				$('<th>').text('MP'),
 				$('<th>').text('AC'),
-				$('<th>').text('Initiative'),
-				$('<th>').text('id')
-			).appendTo('#members');
+				$('<th>').text('Initiative')
+			).appendTo('.em_table');
 			$.each(data.result, function(i, member) {
 				$('<tr>').append(
 					$('<td class="member_name">').text(member.name),
 					$('<td>').text(member.current_hp+"/"+member.max_hp),
 					$('<td>').text(member.current_mp+"/"+member.max_mp),
 					$('<td>').text(member.armor_class),
-					$('<td>').text(member.initiative),
-					$('<td>').text(member.id)
-				).appendTo('#members');
+					$('<td>').text(member.initiative)
+				).appendTo('.em_table');
+				if(member.id == $('#current_member').attr('data-id')){
+					$('<div class="character_box" id="current_box">').append(
+						$('<span class="to_character_name">').text(member.name),
+						$('<div class="to_max_hp">').append(
+							$('<div class="to_curr_hp">').attr('style', 'width:'+(member.current_hp/member.max_hp*100).toString()+'%'),
+							$('<span class="to_hp_text">').text(member.current_hp+"/"+member.max_hp)
+						),
+						$('<div class="to_initiative_circle">').append(
+							$('<span class="to_initiative_text">').text(member.initiative)
+						)
+					).appendTo('.character_boxes');
+				}else{
+					$('<div class="character_box">').append(
+						$('<span class="to_character_name">').text(member.name),
+						$('<div class="to_max_hp">').append(
+							$('<div class="to_curr_hp">').attr('style', 'width:'+(member.current_hp/member.max_hp*100).toString()+'%'),
+							$('<span class="to_hp_text">').text(member.current_hp+"/"+member.max_hp)
+						),
+						$('<div class="to_initiative_circle">').append(
+							$('<span class="to_initiative_text">').text(member.initiative)
+						)
+					).appendTo('.character_boxes');
+				}
 				$('<option>').val(member.id).text(member.name).appendTo('#targets');
 			});
 		});
@@ -334,13 +375,17 @@
 
 	function updateLogs() {
 		$.getJSON($SCRIPT_ROOT + '/show_logs', null, function(data){
-			$('#logs').empty();
+			$('.el_table').empty();
 			$.each(data.result, function(i, log) {
 				$('<tr>').append(
 					$('<td>').text(log.text),
-				).appendTo('#logs');
+				).appendTo('.el_table');
 			});
 		});
+	}
+
+	function toggleBlocks() {
+		$('div.new_character, div.turn_order').toggle();
 	}
 
 	$(updateTables);
