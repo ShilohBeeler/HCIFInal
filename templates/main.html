@@ -1,105 +1,176 @@
 <!doctype html>
-
+<head>
 <link rel='stylesheet' type='text/css' href="{{ url_for('static', filename='styles/main.css') }}">
+<link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet" />
 <script src="{{ url_for('static', filename='jquery.js') }}"></script>
 <script>
 	$SCRIPT_ROOT = {{ request.script_root|tojson }};
 </script>
+</head>
 
-<div class='page_row'>
-	<div class='page_column'>
-		<div>hello world :)</div>
-
-		<div class='function_div' id='member_values'>
-			<label>Name:</label>
-			<input type='text' id='member_name'>
-			<br>
-			<label>Initiative:</label>
-			<input type='number' id='initiative'>
-			<br>
-			<label>Max HP:</label>
-			<input type='number' id='max_hp'>
-			<br>
-			<label>Max MP:</label>
-			<input type='number' id='max_mp'>
-			<br>
-			<label>AC:</label>
-			<input type='number' id='armor_class'>
-			<br>
-			<button id='add_member'>add</button>
-		</div>
-
-		<div class='function_div' id='member_management'>
-			<div>current member = 
-				<p data-id='-1' id='current_member'>N/A</p>
+<body>
+<div class="everything">
+			<div class="tophalf">
+			<div class="turn_order">
+				<span class="section_title">Turn Order</span>
+				<div class="to_line"></div>
+				<div class="bottom_div">
+				<button id="remove_member" class="button">
+					Remove
+				</button>
+				<button id="next_member" class="button">
+					Next
+				</button>
+				<button id="add_block" class="button">
+					+
+				</button>
+				</div>
+				<div class="character_boxes">
+					<div class="character_box">
+						<span class="to_character_name">Nyajima</span>
+						<div class="to_max_hp">
+							<div class="to_curr_hp"></div>
+							<span class="to_hp_text">16/20</span>
+						</div>
+						<div class="to_initiative_circle">
+							<span class="to_initiative_text">20</span>
+						</div>
+					</div>
+				</div>
 			</div>
-			<button id='remove_member'>remove</button>
-			<button id='next_member'>next</button>
+			<div class="new_character">
+					<span class="section_title">New Character</span>
+					<div class="nc_row">
+						<span class="inner_text">Name:</span>
+						<input type="text" id="member_name">
+					</div>
+					<div class="nc_row">
+						<span class="inner_text">Initiative:</span>
+						<input type="number" id="initiative">
+					</div>
+					<div class="nc_row">
+						<span class="inner_text">Max HP:</span>
+						<input type="number" id="max_hp">
+					</div>
+					<div class="nc_row">
+						<span class="inner_text">Max MP:</span>
+						<input type="number" id="max_mp">
+					</div>
+					<div class="nc_row">
+						<span class="inner_text">AC:</span>
+						<input type="number" id="armor_class">
+					</div>
+					<div class="nc_line"></div>
+					<div class="bottom_div">
+						<button id="add_member" class="button">
+							Add
+						</button>
+						<button id="cancel_block" class="button">
+							Cancel
+						</button>
+					</div>
+			</div>
+			<div class="turn_action">
+				<div class="ta_line"></div>
+				<span class="section_title">Nyajima's Turn</span>
+				<span class="select_target">Select Target:</span>
+				<select id="target"></select>
+				<div class="actions">
+					<div class="single_action" id="move_action">
+						<span class="inner_text">Distance:</span>
+						<input type="number" id="distance">
+						<button id="move" class="inner_button">
+							Move!
+						</button>
+					</div>
+					<div class="single_action" id="attack_action">
+						<span class="inner_text">Damage:</span>
+						<input type="number" id="damage">
+						<button id="attack" class="inner_button">
+							Attack Target!
+						</button>
+						<span class="inner_text">Weapon:</span>
+						<input type="text" id="weapon">
+					</div>
+					<div class="single_action" id="ready_action">
+						<span class="inner_text">Action:</span>
+						<input type="text" id="action">
+						<button id="ready" class="inner_button">
+							Ready Action!
+						</button>
+					</div>
+					<div class="single_action" id="reaction_action">
+						<span class="inner_text">Damage:</span>
+						<input type="number" id="damage">
+						<button id="reaction" class="inner_button">
+							Reaction Attack On Target!
+						</button>
+					</div>
+					<div class="single_action" id="bonus_action_action">
+						<span class="inner_text">Action:</span>
+						<input type="text" id="action">
+						<button id="bonus_action" class="inner_button">
+							Bonus Action!
+						</button>
+					</div>
+					<div class="single_action" id="bonus_attack_action">
+						<span class="inner_text">Damage:</span>
+						<input type="number" id="damage">
+						<button id="bonus_attack" class="inner_button">
+							Bonus Attack On Target!
+						</button>
+						<span class="inner_text">Weapon:</span>
+						<input type="text" id="weapon">
+					</div>
+				</div>
+				
+			</div>
+			<div class="encounter_log">
+				<span class="section_title">Encounter Log</span>
+				<div class="el_table_container">
+					<table class="el_table">
+						<tr><td>Nyajima moves 35 ft and attacks Kot for 5 damage. Kot now has 15 HP.</td></tr>
+						<tr><td>Truffle moves 35 ft and attacks Kot for 5 damage. Kot now has 10 HP.</td></tr>
+						<tr><td>Kot attacks Nyajima for 4 damage. Nyajima now has 16 HP.</td></tr>
+						<tr><td>Nyajima moves 20 ft.</td></tr>
+					</table>
+				</div>
+				<div class="bottom_div">
+					<button class="button">
+						Clear Logs
+					</button>
+				</div>
+			</div>
+			</div>
+			<div class="encounter_monsters">
+				<span class="section_title">Encounter Monsters</span>
+				<div class="em_table_container">
+					<table class="em_table">
+						<colgroup>
+							<col class="table_name"/>
+							<col class="table_hp"/>
+							<col class="table_mp"/>
+							<col class="table_ac"/>
+							<col class="table_initiative"/>
+						</colgroup>
+						<tr>
+							<th>test</th>
+							<th>test</th>
+							<th>test</th>
+							<th>test</th>
+							<th>test</th>
+						</tr>
+						<tr>
+							<td>test</td>
+							<td>test</td>
+							<td>test</td>
+							<td>test</td>
+							<td>test</td>
+						</tr>
+					</table>
+				</div>
+			</div>
 		</div>
-
-		<p style='visibility:hidden' id='result'>?</p>
-
-		<h1>Members</h1>
-		<table id='members'>
-	
-		</table>
-		<label>Target:</label>
-		<select id='targets'>
-		</select>
-	</div>
-	<div class='page_column'>
-		<h1>Actions</h1>
-
-		<div class='function_div' id='attack_action'>
-			<label>Damage:</label>
-			<input type='number' id='damage'>
-			<label>Weapon:</label>
-			<input type='text' id='weapon'>
-			<button id='attack'>Attack Target!</button>
-		</div>
-
-		<div class='function_div' id='move_action'>
-			<label>Distance:</label>
-			<input type='number' id='distance'>
-			<button id='move'>Move!</button>
-		</div>
-
-		<div class='function_div' id='ready_action'>
-			<label>Action:</label>
-			<input type='text' id='action'>
-			<button id='ready'>Ready Action!</button>
-		</div>
-
-		<div class='function_div' id='reaction_action'>
-			<label>Damage:</label>
-			<input type='number' id='damage'>
-			<button id='reaction'>Reaction Attack On Target!</button>
-		</div>
-
-		<div class='function_div' id='bonus_action_action'>
-			<label>Action:</label>
-			<input type='text' id='action'>
-			<button id='bonus_action'>Bonus Action!</button>
-		</div>
-
-		<div class='function_div' id='bonus_attack_action'>
-			<label>Damage:</label>
-			<input type='number' id='damage'>
-			<label>Weapon:</label>
-			<input type='text' id='weapon'>
-			<button id='bonus_attack'>Bonus Attack on Target!</button>
-		</div>
-	</div>
-<!--<button id='action'>do a thing</button>
-<button id='action_to_target'>do a thing to a target</button>-->
-	<div class='page_column'>
-		<h1>Logs</h1>
-		<table id='logs'>
-
-		</table>
-	</div>
-</div>
-
 <script>
 	$(function() {
 		$('button#add_member').bind('click', function() {
@@ -276,3 +347,4 @@
 	$(updateLogs);
 
 </script>
+</body>
